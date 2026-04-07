@@ -1,0 +1,170 @@
+---
+const sectionColors: Record<string, string> = {
+  'governing-with-integrity': 'var(--color-section-1)',
+  'national-security':        'var(--color-section-2)',
+  'general-welfare':          'var(--color-section-3)',
+  'the-economy':              'var(--color-section-4)',
+  'regulatory-agencies':      'var(--color-section-5)',
+  'democracy-infrastructure': 'var(--color-section-6)',
+  'technology-and-future':    'var(--color-section-7)',
+};
+
+const statusLabels: Record<string, string> = {
+  published:    'Published',
+  draft:        'Draft',
+  review:       'In Review',
+  'needs-update': 'Needs Update',
+};
+
+const statusColors: Record<string, string> = {
+  published:    '#D1FAE5',
+  draft:        '#FEF3C7',
+  review:       '#DBEAFE',
+  'needs-update': '#FEE2E2',
+};
+
+const statusTextColors: Record<string, string> = {
+  published:    '#065F46',
+  draft:        '#92400E',
+  review:       '#1E40AF',
+  'needs-update': '#991B1B',
+};
+
+interface Props {
+  chapterNumber: number;
+  title: string;
+  agency: string;
+  summary: string;
+  status: 'published' | 'draft' | 'review' | 'needs-update';
+  section: string;
+  slug: string;
+  sources?: number;
+}
+
+const { chapterNumber, title, agency, summary, status, section, slug, sources } = Astro.props;
+const sectionColor = sectionColors[section] ?? 'var(--color-navy)';
+const isPublished = status === 'published';
+---
+
+<article class="chapter-card" style={`--accent: ${sectionColor}`}>
+  <div class="card-stripe"></div>
+  <div class="card-body">
+    <div class="card-meta">
+      <span class="chapter-num">Ch. {chapterNumber}</span>
+      <span
+        class="status-badge"
+        style={`background: ${statusColors[status]}; color: ${statusTextColors[status]}`}
+      >
+        {statusLabels[status]}
+      </span>
+    </div>
+    <h3 class="card-title">
+      {isPublished ? (
+        <a href={`/chapters/${slug}`}>{title}</a>
+      ) : (
+        <span>{title}</span>
+      )}
+    </h3>
+    <p class="card-agency">{agency}</p>
+    <p class="card-summary">{summary.slice(0, 140)}{summary.length > 140 ? '…' : ''}</p>
+    {sources !== undefined && sources > 0 && (
+      <p class="card-sources">{sources} sources</p>
+    )}
+  </div>
+</article>
+
+<style>
+  .chapter-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+
+  .chapter-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  .card-stripe {
+    width: 5px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .chapter-num {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-slate);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-badge {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 0 0 0.25rem;
+    line-height: 1.3;
+  }
+
+  .card-title a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.15s;
+  }
+
+  .card-title a:hover {
+    color: var(--accent);
+  }
+
+  .card-agency {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--color-slate);
+    margin: 0 0 0.5rem;
+  }
+
+  .card-summary {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: #4B5563;
+    margin: 0 0 0.5rem;
+  }
+
+  .card-sources {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    color: var(--color-slate);
+    margin: 0;
+    opacity: 0.6;
+  }
+</style>

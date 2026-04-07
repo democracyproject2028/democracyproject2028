@@ -1,0 +1,290 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ChapterCard from '../components/ChapterCard.astro';
+import { getCollection } from 'astro:content';
+
+const allChapters = await getCollection('chapters');
+const chapterMap = new Map(allChapters.map(c => [c.data.chapterNumber, c]));
+
+const sections = [
+  {
+    number: 1,
+    key: 'governing-with-integrity',
+    title: 'Governing With Integrity',
+    description: 'The White House, civil service, ethics, and the regulatory process.',
+    isNew: false,
+    chapters: [
+      { num: 1,  title: 'The White House & Executive Office',        agency: 'Executive Office of the President' },
+      { num: 2,  title: 'Civil Service & Government Personnel',      agency: 'Office of Personnel Management' },
+      { num: 3,  title: 'Ethics, Transparency & Anti-Corruption',    agency: 'Office of Government Ethics' },
+      { num: 4,  title: 'Regulatory Process & Administrative Law',   agency: 'OIRA / OMB' },
+    ],
+  },
+  {
+    number: 2,
+    key: 'national-security',
+    title: 'National Security & Global Engagement',
+    description: 'Defense, diplomacy, intelligence, and international development.',
+    isNew: false,
+    chapters: [
+      { num: 5,  title: 'Department of Defense',                       agency: 'Department of Defense' },
+      { num: 6,  title: 'Department of Homeland Security',             agency: 'Department of Homeland Security' },
+      { num: 7,  title: 'Department of State & Diplomacy',             agency: 'Department of State' },
+      { num: 8,  title: 'Intelligence Community & Oversight',          agency: 'Office of the Director of National Intelligence' },
+      { num: 9,  title: 'International Development (USAID)',           agency: 'USAID' },
+      { num: 10, title: 'Media, Information & Public Diplomacy',       agency: 'USAGM / State Dept.' },
+    ],
+  },
+  {
+    number: 3,
+    key: 'general-welfare',
+    title: 'The General Welfare',
+    description: 'The domestic agencies that touch everyday American life.',
+    isNew: false,
+    chapters: [
+      { num: 11, title: 'Department of Agriculture & Food Security',  agency: 'USDA' },
+      { num: 12, title: 'Department of Education',                    agency: 'Department of Education' },
+      { num: 13, title: 'Department of Energy & Clean Energy Transition', agency: 'Department of Energy' },
+      { num: 14, title: 'Environmental Protection Agency',            agency: 'EPA' },
+      { num: 15, title: 'Department of Health & Human Services',      agency: 'HHS' },
+      { num: 16, title: 'Department of Housing & Urban Development',  agency: 'HUD' },
+      { num: 17, title: 'Department of the Interior & Public Lands',  agency: 'Department of the Interior' },
+      { num: 18, title: 'Department of Justice & Civil Rights',       agency: 'Department of Justice' },
+      { num: 19, title: 'Department of Labor & Workers',              agency: 'Department of Labor' },
+      { num: 20, title: 'Department of Transportation & Infrastructure', agency: 'Department of Transportation' },
+      { num: 21, title: 'Department of Veterans Affairs',             agency: 'Department of Veterans Affairs' },
+    ],
+  },
+  {
+    number: 4,
+    key: 'the-economy',
+    title: 'The Economy',
+    description: 'Commerce, treasury, the Federal Reserve, trade, and small business.',
+    isNew: false,
+    chapters: [
+      { num: 22, title: 'Department of Commerce & Industrial Policy', agency: 'Department of Commerce' },
+      { num: 23, title: 'Department of the Treasury & Tax Policy',    agency: 'Department of the Treasury' },
+      { num: 24, title: 'The Federal Reserve & Monetary Policy',      agency: 'Federal Reserve' },
+      { num: 25, title: 'Small Business & Entrepreneurship',          agency: 'SBA' },
+      { num: 26, title: 'Trade Policy',                               agency: 'USTR' },
+    ],
+  },
+  {
+    number: 5,
+    key: 'regulatory-agencies',
+    title: 'Independent Regulatory Agencies',
+    description: 'The financial, communications, election, and competition watchdogs.',
+    isNew: false,
+    chapters: [
+      { num: 27, title: 'Financial Regulation (SEC, CFPB)',           agency: 'SEC / CFPB' },
+      { num: 28, title: 'Federal Communications Commission',          agency: 'FCC' },
+      { num: 29, title: 'Federal Election Commission',                agency: 'FEC' },
+      { num: 30, title: 'Federal Trade Commission',                   agency: 'FTC' },
+    ],
+  },
+  {
+    number: 6,
+    key: 'democracy-infrastructure',
+    title: 'Strengthening Democracy',
+    description: 'Voting rights, redistricting, campaign finance, courts, and civic culture.',
+    isNew: true,
+    chapters: [
+      { num: 31, title: 'Voting Rights & Election Administration',    agency: 'Election Assistance Commission' },
+      { num: 32, title: 'Redistricting & Representation',             agency: 'Congress / States' },
+      { num: 33, title: 'Campaign Finance & Political Corruption',    agency: 'FEC / DOJ' },
+      { num: 34, title: 'Congressional Reform & Legislative Process', agency: 'U.S. Congress' },
+      { num: 35, title: 'Judicial Independence & Court Reform',       agency: 'Federal Judiciary' },
+      { num: 36, title: 'State & Local Democracy',                    agency: 'State Governments' },
+      { num: 37, title: 'Civic Engagement & Democratic Culture',      agency: 'AmeriCorps / NEH' },
+    ],
+  },
+  {
+    number: 7,
+    key: 'technology-and-future',
+    title: 'Technology, AI & the Future',
+    description: 'AI governance, digital rights, cybersecurity, science, and emerging threats.',
+    isNew: true,
+    chapters: [
+      { num: 38, title: 'AI Governance & Safety',                     agency: 'NIST / OMB' },
+      { num: 39, title: 'Data Privacy & Digital Rights',              agency: 'FTC / Congress' },
+      { num: 40, title: 'Cybersecurity & Critical Infrastructure',    agency: 'CISA' },
+      { num: 41, title: 'Social Media, Platforms & Information Integrity', agency: 'FTC / FCC' },
+      { num: 42, title: 'Science, Research & Innovation Policy',      agency: 'NSF / OSTP' },
+      { num: 43, title: 'Space, Quantum & Emerging Technology',       agency: 'NASA / OSTP' },
+      { num: 44, title: 'Climate Adaptation & Resilience',            agency: 'FEMA / EPA' },
+      { num: 45, title: 'Pandemic Preparedness & Biosecurity',        agency: 'HHS / CDC' },
+    ],
+  },
+];
+
+const totalPublished = allChapters.filter(c => c.data.status === 'published').length;
+---
+
+<BaseLayout
+  title="The Framework"
+  description="All 45 chapters of the Democracy 2028 policy framework — a comprehensive blueprint for strengthening American democracy and governance."
+>
+  <div class="hero">
+    <div class="max-w-4xl mx-auto px-6 py-16 text-center">
+      <h1>The 45-Chapter Framework</h1>
+      <p class="hero-sub">
+        A comprehensive, evidence-based blueprint covering every federal agency
+        and major policy area. Chapters are open-source and open for contribution.
+      </p>
+      <div class="progress-summary">
+        <div class="progress-bar-wrap">
+          <div
+            class="progress-bar-fill"
+            style={`width: ${Math.round((totalPublished / 45) * 100)}%`}
+            role="progressbar"
+            aria-valuenow={totalPublished}
+            aria-valuemin={0}
+            aria-valuemax={45}
+          ></div>
+        </div>
+        <p class="progress-label">
+          <strong>{totalPublished}</strong> of 45 chapters published
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 pb-20">
+    {sections.map(section => {
+      const sectionColor = `var(--color-section-${section.number})`;
+      return (
+        <section class="mb-16" id={`section-${section.number}`}>
+          <div class="section-header" style={`border-left-color: ${sectionColor}`}>
+            <div class="section-label-row">
+              <span class="section-num" style={`color: ${sectionColor}`}>Section {section.number}</span>
+              {section.isNew && <span class="new-badge">New — not in Project 2025</span>}
+            </div>
+            <h2 class="section-title" style={`color: ${sectionColor}`}>{section.title}</h2>
+            <p class="section-desc">{section.description}</p>
+          </div>
+
+          <div class="chapter-grid">
+            {section.chapters.map(ch => {
+              const published = chapterMap.get(ch.num);
+              return (
+                <ChapterCard
+                  chapterNumber={ch.num}
+                  title={ch.title}
+                  agency={ch.agency}
+                  summary={published?.data.summary ?? 'This chapter is planned and seeking authors. Contribute your expertise.'}
+                  status={published?.data.status ?? 'draft'}
+                  section={section.key}
+                  slug={published?.id ?? `ch${String(ch.num).padStart(2,'0')}`}
+                  sources={published?.data.sources}
+                />
+              );
+            })}
+          </div>
+        </section>
+      );
+    })}
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: var(--color-warm-gray);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--color-navy);
+    margin: 0 0 1rem;
+  }
+
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    color: var(--color-slate);
+    max-width: 55ch;
+    margin: 0 auto 2rem;
+    line-height: 1.65;
+  }
+
+  .progress-summary {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .progress-bar-wrap {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-navy), var(--color-gold));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    min-width: 4px;
+  }
+
+  .progress-label {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--color-slate);
+    margin: 0;
+  }
+
+  .section-header {
+    border-left: 4px solid;
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-label-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .section-num {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .new-badge {
+    font-family: var(--font-ui);
+    font-size: 0.68rem;
+    font-weight: 600;
+    background: #D1FAE5;
+    color: #065F46;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem;
+  }
+
+  .section-desc {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-slate);
+    margin: 0;
+  }
+
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+</style>

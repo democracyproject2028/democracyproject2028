@@ -1,0 +1,103 @@
+---
+const navLinks = [
+  { href: '/framework', label: 'Framework' },
+  { href: '/principles', label: 'Principles' },
+  { href: '/about', label: 'About' },
+  { href: '/contribute', label: 'Contribute' },
+  { href: '/search', label: 'Search' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header style="background-color: var(--color-navy);" class="sticky top-0 z-50 shadow-md">
+  <div id="reading-progress" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3 group">
+      <div class="w-8 h-8 flex items-center justify-center" style="color: var(--color-gold);">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <polygon points="14,2 17,10 26,10 19,15.5 21.5,24 14,19 6.5,24 9,15.5 2,10 11,10" fill="currentColor" opacity="0.9"/>
+        </svg>
+      </div>
+      <span class="text-white font-display text-lg font-semibold tracking-tight group-hover:opacity-90 transition-opacity">
+        Democracy 2028
+      </span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-3 py-1.5 rounded text-sm font-ui font-medium transition-colors',
+            currentPath === link.href
+              ? 'text-white bg-white/10'
+              : 'text-white/70 hover:text-white hover:bg-white/5'
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Mobile menu button -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden text-white/70 hover:text-white p-2 rounded"
+      aria-label="Open menu"
+      aria-expanded="false"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <rect y="3" width="20" height="2" rx="1"/>
+        <rect y="9" width="20" height="2" rx="1"/>
+        <rect y="15" width="20" height="2" rx="1"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile nav dropdown -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-white/10"
+    style="background-color: var(--color-navy);"
+  >
+    <nav class="max-w-6xl mx-auto px-6 py-3 flex flex-col gap-1" aria-label="Mobile navigation">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-3 py-2 rounded text-sm font-ui font-medium transition-colors',
+            currentPath === link.href
+              ? 'text-white bg-white/10'
+              : 'text-white/70 hover:text-white hover:bg-white/5'
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    const isOpen = menu?.classList.contains('hidden') === false;
+    menu?.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // Reading progress bar
+  const bar = document.getElementById('reading-progress');
+  if (bar) {
+    window.addEventListener('scroll', () => {
+      const doc = document.documentElement;
+      const scrolled = doc.scrollTop;
+      const total = doc.scrollHeight - doc.clientHeight;
+      bar.style.width = total > 0 ? `${(scrolled / total) * 100}%` : '0%';
+    }, { passive: true });
+  }
+</script>

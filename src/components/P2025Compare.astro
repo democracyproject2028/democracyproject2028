@@ -1,0 +1,103 @@
+---
+interface Props {
+  p2025: string;
+  d2028: string;
+  topic?: string;
+}
+
+const { p2025, d2028, topic } = Astro.props;
+---
+
+<div class="compare-box">
+  {topic && <p class="compare-topic">{topic}</p>}
+  <div class="compare-grid">
+    <div class="compare-col col-p2025">
+      <p class="compare-label">
+        <span class="label-badge p2025-badge">Project 2025</span>
+      </p>
+      <p class="compare-text">{p2025}</p>
+    </div>
+    <div class="compare-col col-d2028">
+      <p class="compare-label">
+        <span class="label-badge d2028-badge">Democracy 2028</span>
+      </p>
+      <p class="compare-text">{d2028}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .compare-box {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .compare-topic {
+    background: var(--color-warm-gray);
+    padding: 0.75rem 1.25rem;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-slate);
+    margin: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 640px) {
+    .compare-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .compare-col {
+    padding: 1.25rem;
+  }
+
+  .col-p2025 {
+    border-right: 1px solid var(--color-border);
+    background: #FFF8F8;
+  }
+
+  .col-d2028 {
+    background: #F8FFF9;
+  }
+
+  .compare-label {
+    margin: 0 0 0.75rem;
+  }
+
+  .label-badge {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .p2025-badge {
+    background: #FEE2E2;
+    color: #991B1B;
+  }
+
+  .d2028-badge {
+    background: #D1FAE5;
+    color: #065F46;
+  }
+
+  .compare-text {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #374151;
+    margin: 0;
+  }
+</style>

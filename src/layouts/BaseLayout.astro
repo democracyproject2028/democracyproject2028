@@ -1,0 +1,95 @@
+---
+import '../styles/global.css';
+import Navigation from '../components/Navigation.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'An open-source, evidence-based framework for strengthening American democracy, governance, and the common good.',
+  ogImage = '/og-image.png',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://democracyproject2028.org');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title} | Democracy 2028</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={`${title} | Democracy 2028`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | Democracy 2028`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="Democracy 2028" href="/rss.xml" />
+  </head>
+  <body class="bg-cream">
+    <Navigation />
+    <main>
+      <slot />
+    </main>
+    <footer class="bg-navy text-white py-12 mt-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <p class="font-display text-xl font-bold mb-2" style="color: var(--color-gold)">Democracy 2028</p>
+            <p class="text-sm opacity-75 leading-relaxed">
+              An open-source, evidence-based framework for strengthening American democracy.
+            </p>
+            <p class="text-xs opacity-50 mt-4">
+              Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="underline hover:opacity-75" target="_blank" rel="noopener">CC BY-SA 4.0</a>
+            </p>
+          </div>
+          <div>
+            <p class="font-ui font-semibold text-sm mb-3 uppercase tracking-wide opacity-60">Framework</p>
+            <ul class="space-y-2 text-sm opacity-75">
+              <li><a href="/framework" class="hover:opacity-100">All 45 Chapters</a></li>
+              <li><a href="/principles" class="hover:opacity-100">Core Principles</a></li>
+              <li><a href="/about" class="hover:opacity-100">About This Project</a></li>
+              <li><a href="/contribute" class="hover:opacity-100">Contribute</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="font-ui font-semibold text-sm mb-3 uppercase tracking-wide opacity-60">Connect</p>
+            <ul class="space-y-2 text-sm opacity-75">
+              <li><a href="https://github.com/democracyproject2028/democracyproject2028" class="hover:opacity-100" target="_blank" rel="noopener">GitHub</a></li>
+              <li><a href="/search" class="hover:opacity-100">Search</a></li>
+              <li><a href="/progress" class="hover:opacity-100">Project Progress</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-white/10 mt-8 pt-6 text-xs opacity-40 text-center">
+          Democracy 2028 is a nonpartisan, open-source civic project. Not affiliated with any political party or campaign.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .bg-navy { background-color: var(--color-navy); }
+  .bg-cream { background-color: var(--color-cream); }
+  .text-white { color: white; }
+</style>

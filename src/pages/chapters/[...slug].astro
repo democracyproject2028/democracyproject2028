@@ -1,0 +1,51 @@
+---
+import { getCollection, render } from 'astro:content';
+import ChapterLayout from '../../layouts/ChapterLayout.astro';
+
+export async function getStaticPaths() {
+  const chapters = await getCollection('chapters');
+  const sorted = chapters.sort((a, b) => a.data.chapterNumber - b.data.chapterNumber);
+
+  return sorted.map((chapter, index) => ({
+    params: { slug: chapter.id },
+    props: {
+      chapter,
+      prevChapter: index > 0
+        ? { slug: sorted[index - 1].id, title: sorted[index - 1].data.title }
+        : undefined,
+      nextChapter: index < sorted.length - 1
+        ? { slug: sorted[index + 1].id, title: sorted[index + 1].data.title }
+        : undefined,
+    },
+  }));
+}
+
+const { chapter, prevChapter, nextChapter } = Astro.props;
+const { Content } = await render(chapter);
+---
+
+<ChapterLayout
+  title={chapter.data.title}
+  section={chapter.data.section}
+  sectionNumber={chapter.data.sectionNumber}
+  chapterNumber={chapter.data.chapterNumber}
+  agency={chapter.data.agency}
+  summary={chapter.data.summary}
+  authors={chapter.data.authors}
+  lastUpdated={chapter.data.lastUpdated}
+  sources={chapter.data.sources}
+  p2025Response={chapter.data.p2025Response}
+  prevChapter={prevChapter}
+  nextChapter={nextChapter}
+>
+  <Content
+    components={{
+      Citation: (await import('../../components/Citation.astro')).default,
+      DataPoint: (await import('../../components/DataPoint.astro')).default,
+      P2025Compare: (await import('../../components/P2025Compare.astro')).default,
+      Quote: (await import('../../components/Quote.astro')).default,
+      DayOneAction: (await import('../../components/DayOneAction.astro')).default,
+      CallToAction: (await import('../../components/CallToAction.astro')).default,
+    }}
+  />
+</ChapterLayout>

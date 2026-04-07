@@ -1,0 +1,142 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contribute"
+  description="How to contribute expertise, review chapters, or suggest edits to the Democracy 2028 framework."
+>
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    <h1>Contribute to Democracy 2028</h1>
+    <p class="lead">
+      This framework is only as good as the people who build it. We need policy experts,
+      researchers, practitioners, fact-checkers, and engaged citizens.
+    </p>
+
+    <div class="ways-grid">
+      <div class="way-card">
+        <span class="way-icon">&#9997;&#65039;</span>
+        <h2>Author a Chapter</h2>
+        <p>
+          We are seeking subject-matter experts to author chapters in their area.
+          Each chapter follows a standard template and goes through peer review.
+          See the full list of chapters needing authors on the{' '}
+          <a href="/framework">Framework page</a>.
+        </p>
+        <a href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=chapter-proposal.md" target="_blank" rel="noopener" class="cta-link">
+          Propose a chapter &rarr;
+        </a>
+      </div>
+
+      <div class="way-card">
+        <span class="way-icon">&#128270;</span>
+        <h2>Fact-Check &amp; Review</h2>
+        <p>
+          Read published chapters and flag factual errors, outdated information,
+          missing perspectives, or sources that need verification. Use GitHub issues
+          to submit corrections.
+        </p>
+        <a href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=fact-check.md" target="_blank" rel="noopener" class="cta-link">
+          Flag an issue &rarr;
+        </a>
+      </div>
+
+      <div class="way-card">
+        <span class="way-icon">&#128204;</span>
+        <h2>Suggest Policy</h2>
+        <p>
+          Have a specific policy recommendation, case study, or piece of research
+          you think should be incorporated? Open an issue and make the case.
+        </p>
+        <a href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=policy-suggestion.md" target="_blank" rel="noopener" class="cta-link">
+          Suggest a policy &rarr;
+        </a>
+      </div>
+    </div>
+
+    <h2>Contribution Standards</h2>
+    <ul>
+      <li>Every factual claim must have a source (peer-reviewed research preferred)</li>
+      <li>Tone: authoritative but accessible — write for an intelligent general reader</li>
+      <li>Acknowledge complexity and trade-offs honestly</li>
+      <li>When discussing Project 2025 proposals, be factual and fair before critical</li>
+      <li>Minimum 15 sources per chapter; target 30+</li>
+    </ul>
+    <p>
+      See the full{' '}
+      <a href="https://github.com/democracyproject2028/democracyproject2028/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">
+        contribution guidelines on GitHub
+      </a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-navy);
+    margin: 0 0 1rem;
+  }
+
+  .lead {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--color-slate);
+    margin-bottom: 2.5rem;
+  }
+
+  .ways-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  .way-card {
+    background: var(--color-warm-gray);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1.75rem;
+  }
+
+  .way-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 0 0 0.6rem;
+  }
+
+  p, li {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #374151;
+    margin-bottom: 0.75rem;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  a { color: var(--color-navy); }
+  a:hover { color: var(--color-gold); }
+
+  .cta-link {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+
+  .cta-link:hover { text-decoration: underline; }
+</style>

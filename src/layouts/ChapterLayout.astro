@@ -1,0 +1,407 @@
+---
+import BaseLayout from './BaseLayout.astro';
+// MDX components are passed via the chapters/[...slug].astro page
+// They are listed here for documentation but injected at the page level.
+
+const sectionNames: Record<string, string> = {
+  'governing-with-integrity': 'Governing With Integrity',
+  'national-security':        'National Security & Global Engagement',
+  'general-welfare':          'The General Welfare',
+  'the-economy':              'The Economy',
+  'regulatory-agencies':      'Independent Regulatory Agencies',
+  'democracy-infrastructure': 'Strengthening Democracy',
+  'technology-and-future':    'Technology, AI & the Future',
+};
+
+const sectionColors: Record<string, string> = {
+  'governing-with-integrity': 'var(--color-section-1)',
+  'national-security':        'var(--color-section-2)',
+  'general-welfare':          'var(--color-section-3)',
+  'the-economy':              'var(--color-section-4)',
+  'regulatory-agencies':      'var(--color-section-5)',
+  'democracy-infrastructure': 'var(--color-section-6)',
+  'technology-and-future':    'var(--color-section-7)',
+};
+
+interface Props {
+  title: string;
+  section: string;
+  sectionNumber: number;
+  chapterNumber: number;
+  agency: string;
+  summary: string;
+  authors: string[];
+  lastUpdated: Date;
+  sources: number;
+  p2025Response: boolean;
+  prevChapter?: { slug: string; title: string };
+  nextChapter?: { slug: string; title: string };
+}
+
+const {
+  title,
+  section,
+  sectionNumber,
+  chapterNumber,
+  agency,
+  summary,
+  authors,
+  lastUpdated,
+  sources,
+  p2025Response,
+  prevChapter,
+  nextChapter,
+} = Astro.props;
+
+const sectionName = sectionNames[section] ?? section;
+const sectionColor = sectionColors[section] ?? 'var(--color-navy)';
+
+const formattedDate = lastUpdated.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={title} description={summary}>
+  <!-- Chapter header -->
+  <div class="chapter-header" style={`--section-color: ${sectionColor}`}>
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true"> › </span>
+        <a href="/framework">{sectionName}</a>
+        <span aria-hidden="true"> › </span>
+        <span aria-current="page">Chapter {chapterNumber}</span>
+      </nav>
+
+      <!-- Section badge -->
+      <div class="section-badge" style={`background: ${sectionColor}`}>
+        Section {sectionNumber} · {sectionName}
+      </div>
+
+      <h1 class="chapter-title">{title}</h1>
+      <p class="chapter-agency">{agency}</p>
+
+      <!-- Meta bar -->
+      <div class="chapter-meta">
+        <span>{authors.join(', ')}</span>
+        <span class="meta-sep">·</span>
+        <span>Updated {formattedDate}</span>
+        <span class="meta-sep">·</span>
+        <span>{sources} sources</span>
+        {p2025Response && (
+          <>
+            <span class="meta-sep">·</span>
+            <span class="p2025-tag">Responds to Project 2025</span>
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Executive summary -->
+  <div class="summary-band">
+    <div class="max-w-4xl mx-auto px-6 py-8">
+      <p class="summary-label">Executive Summary</p>
+      <p class="summary-text">{summary}</p>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <div class="chapter-layout">
+      <!-- Article content -->
+      <article class="chapter-content prose-chapter">
+        <slot />
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="chapter-sidebar">
+        <div class="sidebar-card">
+          <p class="sidebar-heading">In This Chapter</p>
+          <ul class="toc-list" id="toc"></ul>
+        </div>
+
+        <div class="sidebar-card sidebar-links">
+          <p class="sidebar-heading">Actions</p>
+          <ul class="action-list">
+            <li>
+              <a href={`https://github.com/democracyproject2028/democracyproject2028/edit/main/src/content/chapters/ch${String(chapterNumber).padStart(2,'0')}.mdx`} target="_blank" rel="noopener">
+                ✏️ Suggest an edit
+              </a>
+            </li>
+            <li>
+              <a href={`https://github.com/democracyproject2028/democracyproject2028/issues/new?template=fact-check.md&title=Chapter+${chapterNumber}`} target="_blank" rel="noopener">
+                🔍 Flag a fact
+              </a>
+            </li>
+            <li>
+              <button onclick="window.print()" class="print-btn">
+                🖨️ Print this chapter
+              </button>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Prev / next navigation -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      {prevChapter ? (
+        <a href={`/chapters/${prevChapter.slug}`} class="nav-link nav-prev">
+          <span class="nav-dir">← Previous</span>
+          <span class="nav-title">{prevChapter.title}</span>
+        </a>
+      ) : <div />}
+      {nextChapter ? (
+        <a href={`/chapters/${nextChapter.slug}`} class="nav-link nav-next">
+          <span class="nav-dir">Next →</span>
+          <span class="nav-title">{nextChapter.title}</span>
+        </a>
+      ) : <div />}
+    </nav>
+  </div>
+</BaseLayout>
+
+<script>
+  // Auto-build table of contents from h2/h3 headings
+  const toc = document.getElementById('toc');
+  if (toc) {
+    const headings = document.querySelectorAll('.chapter-content h2, .chapter-content h3');
+    headings.forEach((h, i) => {
+      if (!h.id) h.id = `heading-${i}`;
+      const li = document.createElement('li');
+      li.className = h.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
+      const a = document.createElement('a');
+      a.href = `#${h.id}`;
+      a.textContent = h.textContent ?? '';
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+</script>
+
+<style>
+  .chapter-header {
+    background: var(--section-color);
+    color: white;
+  }
+
+  .breadcrumb {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    opacity: 0.75;
+    margin-bottom: 1.25rem;
+  }
+
+  .breadcrumb a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  .section-badge {
+    display: inline-block;
+    color: white;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    opacity: 0.85;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.15) !important;
+  }
+
+  .chapter-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: white;
+    margin: 0 0 0.5rem;
+    line-height: 1.1;
+    max-width: 40ch;
+  }
+
+  .chapter-agency {
+    color: rgba(255,255,255,0.7);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    margin: 0 0 1.25rem;
+  }
+
+  .chapter-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .meta-sep { opacity: 0.4; }
+
+  .p2025-tag {
+    background: rgba(255,255,255,0.15);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    color: white;
+  }
+
+  .summary-band {
+    background: var(--color-warm-gray);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .summary-label {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-slate);
+    margin: 0 0 0.75rem;
+  }
+
+  .summary-text {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--color-navy);
+    margin: 0;
+    max-width: 70ch;
+  }
+
+  .chapter-layout {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .chapter-layout {
+      grid-template-columns: 1fr;
+    }
+    .chapter-sidebar { order: -1; }
+  }
+
+  .chapter-sidebar {
+    position: sticky;
+    top: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sidebar-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .sidebar-heading {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-slate);
+    margin: 0 0 0.75rem;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .toc-list a {
+    color: var(--color-slate);
+    text-decoration: none;
+    display: block;
+    padding: 0.1rem 0;
+    line-height: 1.4;
+  }
+
+  .toc-list a:hover { color: var(--color-navy); }
+
+  .toc-h3 { padding-left: 0.75rem; opacity: 0.8; }
+
+  .action-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-list a, .print-btn {
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    color: var(--color-slate);
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: block;
+  }
+
+  .action-list a:hover, .print-btn:hover { color: var(--color-navy); }
+
+  .chapter-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: 2rem;
+  }
+
+  .nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .nav-link:hover { border-color: var(--color-navy); background: white; }
+
+  .nav-next { text-align: right; }
+
+  .nav-dir {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--color-slate);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-navy);
+  }
+</style>

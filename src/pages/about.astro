@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="What Democracy 2028 is, why it exists, and who is building it."
+>
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    <h1>About Democracy 2028</h1>
+
+    <p>
+      Democracy 2028 is a grassroots, open-source, evidence-based policy framework for
+      strengthening American democracy and governance. It is structured as a comprehensive,
+      chapter-by-chapter blueprint covering every federal agency and major policy area.
+    </p>
+
+    <h2>What This Is</h2>
+    <p>
+      This project is modeled on the scope of major policy frameworks like the Heritage
+      Foundation's "Project 2025: Mandate for Leadership" — but grounded in democratic
+      values, empirical evidence, and constructive governance.
+    </p>
+    <p>
+      This is <strong>not</strong> a partisan document. It draws on research and principles from
+      across the political spectrum. The frame is "good governance and democratic accountability,"
+      not left versus right.
+    </p>
+
+    <h2>How It Works</h2>
+    <p>
+      Every chapter is written by subject-matter experts, reviewed by practitioners and
+      researchers, and published openly under a Creative Commons license. Every factual
+      claim has a source. Every recommendation is specific and actionable.
+    </p>
+    <p>
+      The full project is hosted on GitHub. Anyone can propose edits, flag factual errors,
+      or apply to write a chapter in their area of expertise.
+    </p>
+
+    <h2>License</h2>
+    <p>
+      All content is published under the{' '}
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">
+        Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)
+      </a>.
+      You are free to share and adapt the material for any purpose, provided you give
+      appropriate credit and distribute your contributions under the same license.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      To contribute, flag an error, or get in touch, the best path is via{' '}
+      <a href="https://github.com/democracyproject2028/democracyproject2028" target="_blank" rel="noopener">
+        GitHub
+      </a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-navy);
+    margin: 0 0 2rem;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 2.5rem 0 0.75rem;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.4rem;
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #2D3748;
+    margin-bottom: 1.25rem;
+  }
+
+  a { color: var(--color-navy); }
+  a:hover { color: var(--color-gold); }
+</style>

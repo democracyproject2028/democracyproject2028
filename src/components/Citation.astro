@@ -1,0 +1,59 @@
+---
+interface Props {
+  author: string;
+  title: string;
+  publication: string;
+  year: string | number;
+  url?: string;
+  accessDate?: string;
+}
+
+const { author, title, publication, year, url, accessDate } = Astro.props;
+
+// Citations are collected via a simple counter pattern
+// For full hover previews a React component would be needed;
+// this version renders an accessible superscript with a tooltip.
+---
+
+<cite
+  class="citation-ref"
+  title={`${author}. "${title}." ${publication}, ${year}.${url ? ` ${url}` : ''}${accessDate ? ` Accessed ${accessDate}.` : ''}`}
+>
+  {url ? (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="citation-link"
+      aria-label={`Citation: ${author}, "${title}", ${publication}, ${year}`}
+    >
+      <sup>[cite]</sup>
+    </a>
+  ) : (
+    <sup>[cite]</sup>
+  )}
+</cite>
+
+<style>
+  .citation-ref {
+    font-style: normal;
+    position: relative;
+    display: inline;
+  }
+
+  .citation-link {
+    color: var(--color-navy);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.7em;
+    font-weight: 600;
+    vertical-align: super;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+
+  .citation-link:hover {
+    opacity: 1;
+    color: var(--color-gold);
+  }
+</style>

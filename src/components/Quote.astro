@@ -1,0 +1,77 @@
+---
+interface Props {
+  text: string;
+  attribution: string;
+  source?: string;
+  url?: string;
+}
+
+const { text, attribution, source, url } = Astro.props;
+---
+
+<figure class="pull-quote">
+  <blockquote>
+    <p>{text}</p>
+  </blockquote>
+  <figcaption>
+    <span class="attribution">— {attribution}</span>
+    {source && (
+      <span class="source">
+        {url ? (
+          <a href={url} target="_blank" rel="noopener noreferrer">{source}</a>
+        ) : (
+          <span>{source}</span>
+        )}
+      </span>
+    )}
+  </figcaption>
+</figure>
+
+<style>
+  .pull-quote {
+    margin: 2.5rem 0;
+    padding: 1.5rem 2rem;
+    border-left: 4px solid var(--color-gold);
+    background: var(--color-warm-gray);
+    border-radius: 0 8px 8px 0;
+  }
+
+  blockquote {
+    margin: 0;
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  blockquote p {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--color-navy);
+    margin: 0 0 0.75rem;
+  }
+
+  figcaption {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--color-slate);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .source {
+    opacity: 0.75;
+  }
+
+  .source a {
+    color: var(--color-slate);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .source a:hover {
+    color: var(--color-navy);
+  }
+</style>

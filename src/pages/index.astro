@@ -1,0 +1,496 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allChapters = await getCollection('chapters');
+const totalPublished = allChapters.filter(c => c.data.status === 'published').length;
+
+const principles = [
+  { icon: '⚖️', title: 'Democratic Accountability',        desc: 'Government must answer to the people it serves — through elections, oversight, and the rule of law.' },
+  { icon: '📜', title: 'Rule of Law & Constitutionalism',  desc: 'No person or office is above the law. Constitutional guardrails are features, not obstacles.' },
+  { icon: '🔬', title: 'Evidence-Based Policy',            desc: 'Good governance is grounded in data, research, and honest reckoning with what works.' },
+  { icon: '🔎', title: 'Transparency & Anti-Corruption',   desc: 'Public office is a public trust. Corruption erodes the foundation of every other institution.' },
+  { icon: '🗽', title: 'Rights & Liberties for All',       desc: 'Constitutional rights apply to every person. Protecting minorities is not optional in a democracy.' },
+  { icon: '🏛️', title: 'Competent, Effective Government', desc: 'Government that works is not an accident. It requires expertise, investment, and accountability.' },
+  { icon: '🌐', title: 'Future-Readiness',                 desc: 'Technology, climate, and global change require governance that looks beyond the next election cycle.' },
+];
+---
+
+<BaseLayout
+  title="A Blueprint for the Country We Can Be"
+  description="Democracy 2028 is an open-source, evidence-based framework for strengthening American democracy, governance, and the common good."
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner max-w-4xl mx-auto px-6 py-24 text-center">
+      <div class="hero-eyebrow">An open-source civic framework</div>
+      <h1 class="hero-title">
+        A Blueprint for the<br />Country We Can Be
+      </h1>
+      <p class="hero-sub">
+        Democracy 2028 is a grassroots, evidence-based policy framework for
+        strengthening American democracy and governance — written in public,
+        open to all, grounded in facts.
+      </p>
+      <div class="hero-ctas">
+        <a href="/framework" class="btn-primary">Read the Framework</a>
+        <a href="/contribute" class="btn-secondary">Contribute</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Case -->
+  <section class="section-band">
+    <div class="max-w-3xl mx-auto px-6 py-16">
+      <h2 class="section-h2">Why This Exists</h2>
+      <div class="prose-body">
+        <p>
+          American democracy faces challenges that demand more than opposition — they require
+          an affirmative vision. Democracy 2028 provides that vision: a comprehensive,
+          chapter-by-chapter blueprint covering every federal agency and major policy area,
+          modeled on the scope of major policy frameworks but grounded in democratic values,
+          empirical evidence, and constructive governance.
+        </p>
+        <p>
+          This is not a partisan document. It draws on research and principles from across
+          the political spectrum. The frame is "good governance and democratic accountability"
+          — not left versus right. Where evidence supports conservative approaches, we say so.
+          Where it doesn't, we say that too.
+        </p>
+        <p>
+          Every chapter is open-source under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+          Every claim has a source. Every recommendation is specific and actionable.
+          This is a living document — built in public, improved by many.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Principles -->
+  <section class="section-alt py-16">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <h2 class="section-h2">Core Principles</h2>
+        <p class="section-sub">Seven commitments that run through every chapter of the framework.</p>
+      </div>
+      <div class="principles-grid">
+        {principles.map(p => (
+          <div class="principle-card">
+            <span class="principle-icon" aria-hidden="true">{p.icon}</span>
+            <h3 class="principle-title">{p.title}</h3>
+            <p class="principle-desc">{p.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="text-center mt-10">
+        <a href="/principles" class="link-more">Read the full principles &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Framework overview -->
+  <section class="section-band py-16">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <h2 class="section-h2">The 45-Chapter Framework</h2>
+        <p class="section-sub">Covering every federal agency and major policy area.</p>
+        <div class="progress-wrap">
+          <div
+            class="progress-fill"
+            style={`width: ${Math.max(4, Math.round((totalPublished / 45) * 100))}%`}
+          ></div>
+        </div>
+        <p class="progress-text"><strong>{totalPublished}</strong> of 45 chapters published</p>
+      </div>
+      <div class="section-pills">
+        {[
+          { n: 1, label: 'Governing With Integrity',     count: 4  },
+          { n: 2, label: 'National Security',             count: 6  },
+          { n: 3, label: 'The General Welfare',           count: 11 },
+          { n: 4, label: 'The Economy',                   count: 5  },
+          { n: 5, label: 'Regulatory Agencies',           count: 4  },
+          { n: 6, label: 'Strengthening Democracy',       count: 7  },
+          { n: 7, label: 'Technology & the Future',       count: 8  },
+        ].map(s => (
+          <a href={`/framework#section-${s.n}`} class="section-pill" style={`--c: var(--color-section-${s.n})`}>
+            <span class="pill-num">Section {s.n}</span>
+            <span class="pill-label">{s.label}</span>
+            <span class="pill-count">{s.count} chapters</span>
+          </a>
+        ))}
+      </div>
+      <div class="text-center mt-8">
+        <a href="/framework" class="btn-primary-dark">View All Chapters</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How this is different -->
+  <section class="section-alt py-16">
+    <div class="max-w-4xl mx-auto px-6">
+      <h2 class="section-h2 text-center mb-10">How This Is Different</h2>
+      <div class="diff-grid">
+        {[
+          { label: 'Open-source',    desc: "Every word is public. Anyone can suggest edits, flag errors, or contribute chapters via GitHub." },
+          { label: 'Evidence-based', desc: "Every factual claim has a citation. We prefer peer-reviewed research and government data over ideology." },
+          { label: 'Constructive',   desc: "We don't just critique — we propose specific, actionable alternatives grounded in what works." },
+          { label: 'Invites debate', desc: "We acknowledge trade-offs honestly. Good policy doesn't pretend hard questions are easy." },
+        ].map(item => (
+          <div class="diff-item">
+            <span class="diff-label">{item.label}</span>
+            <p class="diff-desc">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Get Involved -->
+  <section class="section-band py-16">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="section-h2">Get Involved</h2>
+      <p class="section-sub mb-10">This framework is only as good as the people who build it.</p>
+      <div class="involve-grid">
+        <div class="involve-card">
+          <div class="involve-icon">&#9997;&#65039;</div>
+          <h3>Contribute Expertise</h3>
+          <p>Policy experts, researchers, and practitioners can author or review chapters in their area.</p>
+          <a href="/contribute" class="involve-link">Learn how &rarr;</a>
+        </div>
+        <div class="involve-card">
+          <div class="involve-icon">&#128269;</div>
+          <h3>Review &amp; Fact-Check</h3>
+          <p>Read published chapters and flag errors, outdated information, or missing perspectives.</p>
+          <a href="https://github.com/democracyproject2028/democracyproject2028/issues" target="_blank" rel="noopener" class="involve-link">Open an issue &rarr;</a>
+        </div>
+        <div class="involve-card">
+          <div class="involve-icon">&#128226;</div>
+          <h3>Share &amp; Spread</h3>
+          <p>Share chapters with journalists, policymakers, teachers, and engaged citizens in your network.</p>
+          <a href="/framework" class="involve-link">Browse chapters &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--color-navy) 0%, #253a63 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 70% 50%, rgba(197,151,59,0.12) 0%, transparent 60%);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: white;
+    line-height: 1.1;
+    margin: 0 0 1.5rem;
+    position: relative;
+  }
+
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255,255,255,0.8);
+    max-width: 52ch;
+    margin: 0 auto 2.5rem;
+    line-height: 1.65;
+    position: relative;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .btn-primary {
+    background: var(--color-gold);
+    color: var(--color-navy);
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: filter 0.15s, transform 0.1s;
+  }
+
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  .btn-primary-dark {
+    background: var(--color-navy);
+    color: white;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: filter 0.15s;
+  }
+
+  .btn-primary-dark:hover { filter: brightness(1.2); }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: background 0.15s;
+  }
+
+  .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+  .section-band { background: var(--color-cream); }
+  .section-alt  { background: var(--color-warm-gray); }
+
+  .section-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 800;
+    color: var(--color-navy);
+    margin: 0 0 0.75rem;
+  }
+
+  .section-sub {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    color: var(--color-slate);
+    max-width: 55ch;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .prose-body p {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #2D3748;
+    margin-bottom: 1.5rem;
+    max-width: 68ch;
+  }
+
+  .prose-body a { color: var(--color-navy); }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .principle-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: box-shadow 0.15s;
+  }
+
+  .principle-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+
+  .principle-icon { font-size: 1.75rem; display: block; margin-bottom: 0.75rem; }
+
+  .principle-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 0 0 0.5rem;
+  }
+
+  .principle-desc {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-slate);
+    margin: 0;
+  }
+
+  .link-more {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    color: var(--color-navy);
+    text-decoration: none;
+  }
+
+  .link-more:hover { text-decoration: underline; }
+
+  .progress-wrap {
+    max-width: 400px;
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1.25rem auto 0.5rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-navy), var(--color-gold));
+    border-radius: 4px;
+  }
+
+  .progress-text {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--color-slate);
+    margin: 0 0 2rem;
+  }
+
+  .section-pills {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 1rem 1.25rem;
+    background: white;
+    border: 2px solid var(--c);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .section-pill:hover { background: var(--color-warm-gray); }
+
+  .pill-num {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--c);
+  }
+
+  .pill-label {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    line-height: 1.2;
+  }
+
+  .pill-count {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--color-slate);
+  }
+
+  .diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 640px) { .diff-grid { grid-template-columns: 1fr; } }
+
+  .diff-item {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+  }
+
+  .diff-label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .diff-desc {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-slate);
+    margin: 0;
+  }
+
+  .involve-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .involve-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1.75rem 1.5rem;
+    text-align: left;
+  }
+
+  .involve-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+
+  .involve-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 0 0 0.5rem;
+  }
+
+  .involve-card p {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-slate);
+    margin: 0 0 1rem;
+  }
+
+  .involve-link {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    text-decoration: none;
+  }
+
+  .involve-link:hover { text-decoration: underline; }
+
+  .text-center { text-align: center; }
+  .mb-10 { margin-bottom: 2.5rem; }
+  .mb-12 { margin-bottom: 3rem; }
+  .mt-8  { margin-top: 2rem; }
+  .mt-10 { margin-top: 2.5rem; }
+  .py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+</style>
