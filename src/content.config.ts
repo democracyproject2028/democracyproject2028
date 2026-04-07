@@ -65,4 +65,21 @@ const authors = defineCollection({
   }),
 });
 
-export const collections = { chapters, briefs, principles, authors };
+const actionPlans = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/action-plans' }),
+  schema: z.object({
+    title: z.string(),
+    chapterNumber: z.number(),
+    chapterSlug: z.string(),
+    focus: z.string(),                    // e.g. "Federal HR Directors", "Congressional Staff"
+    contributor: z.string(),
+    contributorTitle: z.string().optional(),
+    contributorOrg: z.string().optional(),
+    status: z.enum(['submitted', 'review', 'published']),
+    date: z.date(),
+    summary: z.string(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { chapters, briefs, principles, authors, actionPlans };
