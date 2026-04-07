@@ -1,142 +1,686 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allChapters = await getCollection('chapters');
+const allActionPlans = await getCollection('actionPlans');
+
+// Map published action plans by chapterNumber for quick lookup
+const actionPlansByChapter = new Map<number, typeof allActionPlans>();
+for (const plan of allActionPlans) {
+  const num = plan.data.chapterNumber;
+  if (!actionPlansByChapter.has(num)) actionPlansByChapter.set(num, []);
+  actionPlansByChapter.get(num)!.push(plan);
+}
+
+// Full 45-chapter list with audience tags
+const allChapterDefs = [
+  // Section 1
+  { num: 1,  title: 'The White House & Executive Office',        section: 'Governing With Integrity',        audiences: ['Federal Officials', 'Congressional Staff', 'Researchers'] },
+  { num: 2,  title: 'Civil Service & Government Personnel',      section: 'Governing With Integrity',        audiences: ['Federal Officials', 'HR & Workforce', 'Congressional Staff'] },
+  { num: 3,  title: 'Ethics, Transparency & Anti-Corruption',    section: 'Governing With Integrity',        audiences: ['Federal Officials', 'Advocates', 'Journalists'] },
+  { num: 4,  title: 'Regulatory Process & Administrative Law',   section: 'Governing With Integrity',        audiences: ['Federal Officials', 'Researchers', 'Legal Practitioners'] },
+  // Section 2
+  { num: 5,  title: 'Department of Defense',                     section: 'National Security',              audiences: ['Federal Officials', 'Researchers', 'Veterans'] },
+  { num: 6,  title: 'Department of Homeland Security',           section: 'National Security',              audiences: ['Federal Officials', 'State & Local Government', 'Advocates'] },
+  { num: 7,  title: 'Department of State & Diplomacy',           section: 'National Security',              audiences: ['Federal Officials', 'Researchers', 'International Affairs'] },
+  { num: 8,  title: 'Intelligence Community & Oversight',        section: 'National Security',              audiences: ['Federal Officials', 'Congressional Staff', 'Researchers'] },
+  { num: 9,  title: 'International Development (USAID)',         section: 'National Security',              audiences: ['Federal Officials', 'Advocates', 'International Affairs'] },
+  { num: 10, title: 'Media, Information & Public Diplomacy',     section: 'National Security',              audiences: ['Researchers', 'Journalists', 'International Affairs'] },
+  // Section 3
+  { num: 11, title: 'Agriculture & Food Security',               section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Researchers'] },
+  { num: 12, title: 'Department of Education',                   section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Educators'] },
+  { num: 13, title: 'Energy & Clean Energy Transition',          section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Industry'] },
+  { num: 14, title: 'Environmental Protection Agency',           section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Advocates'] },
+  { num: 15, title: 'Health & Human Services',                   section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Healthcare'] },
+  { num: 16, title: 'Housing & Urban Development',               section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Advocates'] },
+  { num: 17, title: 'Interior & Public Lands',                   section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Advocates'] },
+  { num: 18, title: 'Justice & Civil Rights',                    section: 'The General Welfare',            audiences: ['Federal Officials', 'Legal Practitioners', 'Advocates'] },
+  { num: 19, title: 'Labor & Workers',                           section: 'The General Welfare',            audiences: ['Federal Officials', 'HR & Workforce', 'Advocates'] },
+  { num: 20, title: 'Transportation & Infrastructure',           section: 'The General Welfare',            audiences: ['Federal Officials', 'State & Local Government', 'Industry'] },
+  { num: 21, title: 'Veterans Affairs',                          section: 'The General Welfare',            audiences: ['Federal Officials', 'Veterans', 'Advocates'] },
+  // Section 4
+  { num: 22, title: 'Commerce & Industrial Policy',              section: 'The Economy',                    audiences: ['Federal Officials', 'Industry', 'Researchers'] },
+  { num: 23, title: 'Treasury & Tax Policy',                     section: 'The Economy',                    audiences: ['Federal Officials', 'Researchers', 'Legal Practitioners'] },
+  { num: 24, title: 'Federal Reserve & Monetary Policy',         section: 'The Economy',                    audiences: ['Federal Officials', 'Researchers', 'Industry'] },
+  { num: 25, title: 'Small Business & Entrepreneurship',         section: 'The Economy',                    audiences: ['Federal Officials', 'Industry', 'State & Local Government'] },
+  { num: 26, title: 'Trade Policy',                              section: 'The Economy',                    audiences: ['Federal Officials', 'Industry', 'Researchers'] },
+  // Section 5
+  { num: 27, title: 'Financial Regulation (SEC, CFPB)',          section: 'Regulatory Agencies',            audiences: ['Federal Officials', 'Industry', 'Legal Practitioners'] },
+  { num: 28, title: 'Federal Communications Commission',         section: 'Regulatory Agencies',            audiences: ['Federal Officials', 'Industry', 'Researchers'] },
+  { num: 29, title: 'Federal Election Commission',               section: 'Regulatory Agencies',            audiences: ['Federal Officials', 'Advocates', 'Legal Practitioners'] },
+  { num: 30, title: 'Federal Trade Commission',                  section: 'Regulatory Agencies',            audiences: ['Federal Officials', 'Industry', 'Legal Practitioners'] },
+  // Section 6
+  { num: 31, title: 'Voting Rights & Election Administration',   section: 'Strengthening Democracy',        audiences: ['State & Local Government', 'Advocates', 'Legal Practitioners'] },
+  { num: 32, title: 'Redistricting & Representation',            section: 'Strengthening Democracy',        audiences: ['State & Local Government', 'Advocates', 'Researchers'] },
+  { num: 33, title: 'Campaign Finance & Political Corruption',   section: 'Strengthening Democracy',        audiences: ['Federal Officials', 'Advocates', 'Legal Practitioners'] },
+  { num: 34, title: 'Congressional Reform & Legislative Process',section: 'Strengthening Democracy',        audiences: ['Congressional Staff', 'Researchers', 'Advocates'] },
+  { num: 35, title: 'Judicial Independence & Court Reform',      section: 'Strengthening Democracy',        audiences: ['Legal Practitioners', 'Researchers', 'Advocates'] },
+  { num: 36, title: 'State & Local Democracy',                   section: 'Strengthening Democracy',        audiences: ['State & Local Government', 'Advocates', 'Researchers'] },
+  { num: 37, title: 'Civic Engagement & Democratic Culture',     section: 'Strengthening Democracy',        audiences: ['Educators', 'Advocates', 'Researchers'] },
+  // Section 7
+  { num: 38, title: 'AI Governance & Safety',                    section: 'Technology & the Future',        audiences: ['Federal Officials', 'Industry', 'Researchers'] },
+  { num: 39, title: 'Data Privacy & Digital Rights',             section: 'Technology & the Future',        audiences: ['Federal Officials', 'Industry', 'Legal Practitioners'] },
+  { num: 40, title: 'Cybersecurity & Critical Infrastructure',   section: 'Technology & the Future',        audiences: ['Federal Officials', 'Industry', 'State & Local Government'] },
+  { num: 41, title: 'Social Media, Platforms & Info Integrity',  section: 'Technology & the Future',        audiences: ['Federal Officials', 'Industry', 'Researchers'] },
+  { num: 42, title: 'Science, Research & Innovation Policy',     section: 'Technology & the Future',        audiences: ['Federal Officials', 'Researchers', 'Industry'] },
+  { num: 43, title: 'Space, Quantum & Emerging Technology',      section: 'Technology & the Future',        audiences: ['Federal Officials', 'Industry', 'Researchers'] },
+  { num: 44, title: 'Climate Adaptation & Resilience',           section: 'Technology & the Future',        audiences: ['Federal Officials', 'State & Local Government', 'Advocates'] },
+  { num: 45, title: 'Pandemic Preparedness & Biosecurity',       section: 'Technology & the Future',        audiences: ['Federal Officials', 'Healthcare', 'Researchers'] },
+];
+
+const publishedChapterNums = new Set(allChapters.map(c => c.data.chapterNumber));
+
+const allAudiences = [
+  'Federal Officials',
+  'Congressional Staff',
+  'State & Local Government',
+  'Legal Practitioners',
+  'Researchers',
+  'Advocates',
+  'Educators',
+  'HR & Workforce',
+  'Healthcare',
+  'Industry',
+  'Veterans',
+  'Journalists',
+  'International Affairs',
+];
 ---
 
 <BaseLayout
   title="Contribute"
-  description="How to contribute expertise, review chapters, or suggest edits to the Democracy 2028 framework."
+  description="Help build the Democracy 2028 framework. We wrote the analysis — you write the action plan for your world."
 >
-  <div class="max-w-3xl mx-auto px-6 py-16">
-    <h1>Contribute to Democracy 2028</h1>
-    <p class="lead">
-      This framework is only as good as the people who build it. We need policy experts,
-      researchers, practitioners, fact-checkers, and engaged citizens.
-    </p>
-
-    <div class="ways-grid">
-      <div class="way-card">
-        <span class="way-icon">&#9997;&#65039;</span>
-        <h2>Author a Chapter</h2>
-        <p>
-          We are seeking subject-matter experts to author chapters in their area.
-          Each chapter follows a standard template and goes through peer review.
-          See the full list of chapters needing authors on the{' '}
-          <a href="/framework">Framework page</a>.
-        </p>
-        <a href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=chapter-proposal.md" target="_blank" rel="noopener" class="cta-link">
-          Propose a chapter &rarr;
-        </a>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="max-w-4xl mx-auto px-6 py-16">
+      <div class="eyebrow">Open for contributions</div>
+      <h1>You Write the Action Plan</h1>
+      <p class="hero-sub">
+        Democracy 2028 provides the research and recommendations. Contributors
+        provide the implementation — practical guides written for specific
+        audiences by people who know their domain.
+      </p>
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-label">We write</div>
+          <div class="model-title">The Analysis</div>
+          <p>Evidence review, policy recommendations, Day One actions — grounded in research, written for the public.</p>
+        </div>
+        <div class="model-arrow" aria-hidden="true">+</div>
+        <div class="model-card model-card-gold">
+          <div class="model-label">You write</div>
+          <div class="model-title">The Action Plan</div>
+          <p>A practical 500–1,500 word guide for your specific audience — federal staff, state legislators, advocates, practitioners.</p>
+        </div>
       </div>
+    </div>
+  </div>
 
-      <div class="way-card">
-        <span class="way-icon">&#128270;</span>
-        <h2>Fact-Check &amp; Review</h2>
-        <p>
-          Read published chapters and flag factual errors, outdated information,
-          missing perspectives, or sources that need verification. Use GitHub issues
-          to submit corrections.
-        </p>
-        <a href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=fact-check.md" target="_blank" rel="noopener" class="cta-link">
-          Flag an issue &rarr;
-        </a>
+  <!-- Three ways to contribute -->
+  <div class="ways-band">
+    <div class="max-w-5xl mx-auto px-6 py-12">
+      <h2 class="section-h2">Three Ways to Contribute</h2>
+      <div class="ways-grid">
+        <div class="way-card way-primary">
+          <div class="way-num">01</div>
+          <h3>Write an Action Plan</h3>
+          <p>
+            Pick a chapter in your area of expertise. Write a focused implementation
+            guide for a specific audience — federal staff, state lawmakers, nonprofit
+            directors, practitioners. No need to redo the research — just answer:
+            <em>given this analysis, what should someone in my world actually do?</em>
+          </p>
+          <div class="way-meta">500–1,500 words &middot; Any chapter &middot; Any audience</div>
+          <a
+            href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=action-plan-submission.md"
+            target="_blank" rel="noopener"
+            class="way-btn"
+          >
+            Submit an action plan &rarr;
+          </a>
+        </div>
+        <div class="way-card">
+          <div class="way-num">02</div>
+          <h3>Author a Chapter</h3>
+          <p>
+            Subject-matter experts can volunteer to draft or co-draft a full chapter.
+            Chapters follow a standard template and go through editorial review.
+            40 of 45 chapters are still unwritten.
+          </p>
+          <div class="way-meta">4,000–8,000 words &middot; Full chapter &middot; Expert authors</div>
+          <a
+            href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=chapter-proposal.md"
+            target="_blank" rel="noopener"
+            class="way-btn"
+          >
+            Propose yourself as author &rarr;
+          </a>
+        </div>
+        <div class="way-card">
+          <div class="way-num">03</div>
+          <h3>Fact-Check & Review</h3>
+          <p>
+            Read any published chapter. Flag inaccurate statistics, outdated
+            information, missing citations, or perspectives that need to be added.
+            This is the most accessible form of contribution — and essential.
+          </p>
+          <div class="way-meta">Any length &middot; Any chapter &middot; Anyone</div>
+          <a
+            href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=fact-check.md"
+            target="_blank" rel="noopener"
+            class="way-btn"
+          >
+            Flag an issue &rarr;
+          </a>
+        </div>
       </div>
+    </div>
+  </div>
 
-      <div class="way-card">
-        <span class="way-icon">&#128204;</span>
-        <h2>Suggest Policy</h2>
-        <p>
-          Have a specific policy recommendation, case study, or piece of research
-          you think should be incorporated? Open an issue and make the case.
-        </p>
-        <a href="https://github.com/democracyproject2028/democracyproject2028/issues/new?template=policy-suggestion.md" target="_blank" rel="noopener" class="cta-link">
-          Suggest a policy &rarr;
-        </a>
+  <!-- Chapter browser -->
+  <div class="max-w-6xl mx-auto px-6 py-14">
+    <div class="browser-header">
+      <div>
+        <h2 class="section-h2">Open Chapters</h2>
+        <p class="section-sub">Every chapter is open for action plans. Filter by your background.</p>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="dot dot-published"></span> Chapter published</span>
+        <span class="legend-item"><span class="dot dot-draft"></span> Draft in progress</span>
+        <span class="legend-item"><span class="dot dot-open"></span> Seeking author</span>
       </div>
     </div>
 
-    <h2>Contribution Standards</h2>
-    <ul>
-      <li>Every factual claim must have a source (peer-reviewed research preferred)</li>
-      <li>Tone: authoritative but accessible — write for an intelligent general reader</li>
-      <li>Acknowledge complexity and trade-offs honestly</li>
-      <li>When discussing Project 2025 proposals, be factual and fair before critical</li>
-      <li>Minimum 15 sources per chapter; target 30+</li>
-    </ul>
-    <p>
-      See the full{' '}
-      <a href="https://github.com/democracyproject2028/democracyproject2028/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">
-        contribution guidelines on GitHub
-      </a>.
-    </p>
+    <!-- Audience filter -->
+    <div class="filter-row" role="group" aria-label="Filter by audience">
+      <button class="filter-btn active" data-filter="all">All</button>
+      {allAudiences.map(a => (
+        <button class="filter-btn" data-filter={a}>{a}</button>
+      ))}
+    </div>
+
+    <!-- Chapter list -->
+    <div class="chapter-list" id="chapter-list">
+      {allChapterDefs.map(ch => {
+        const published = allChapters.find(c => c.data.chapterNumber === ch.num);
+        const plans = actionPlansByChapter.get(ch.num) ?? [];
+        const isPublished = !!published && published.data.status === 'published';
+        const isDraft = !!published;
+        const issueUrl = `https://github.com/democracyproject2028/democracyproject2028/issues/new?template=action-plan-submission.md&title=[ACTION+PLAN]+Chapter+${ch.num}:+${encodeURIComponent(ch.title)}`;
+
+        return (
+          <div
+            class="chapter-row"
+            data-audiences={ch.audiences.join(',')}
+          >
+            <div class="row-left">
+              <div class="row-meta">
+                <span class={`status-dot ${isPublished ? 'dot-published' : isDraft ? 'dot-draft' : 'dot-open'}`}></span>
+                <span class="ch-num">Ch. {ch.num}</span>
+                <span class="ch-section">{ch.section}</span>
+              </div>
+              <div class="ch-title">
+                {isPublished ? (
+                  <a href={`/chapters/${published!.id}`}>{ch.title}</a>
+                ) : (
+                  <span>{ch.title}</span>
+                )}
+              </div>
+              <div class="audience-tags">
+                {ch.audiences.map(a => (
+                  <span class="audience-tag">{a}</span>
+                ))}
+              </div>
+            </div>
+            <div class="row-right">
+              {plans.length > 0 && (
+                <span class="plans-badge">{plans.length} action plan{plans.length > 1 ? 's' : ''}</span>
+              )}
+              <a href={issueUrl} target="_blank" rel="noopener" class="contribute-btn">
+                Write action plan &rarr;
+              </a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <!-- Standards callout -->
+  <div class="standards-band">
+    <div class="max-w-4xl mx-auto px-6 py-12">
+      <h2 class="section-h2">Contribution Standards</h2>
+      <div class="standards-grid">
+        {[
+          { label: 'Cite your sources', desc: 'Every factual claim needs a source. Link to primary sources wherever possible.' },
+          { label: 'Disclose affiliations', desc: 'Disclose any institutional affiliations or potential conflicts of interest upfront.' },
+          { label: 'Stay in your lane', desc: 'Action plans should focus on implementation in your domain — not re-litigate the research layer.' },
+          { label: 'CC BY-SA 4.0', desc: 'All contributions are published under Creative Commons Attribution-ShareAlike. Your name stays on your work.' },
+        ].map(s => (
+          <div class="standard-item">
+            <span class="standard-label">{s.label}</span>
+            <p class="standard-desc">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="standards-link">
+        Read the full <a href="https://github.com/democracyproject2028/democracyproject2028/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">contribution guidelines on GitHub</a>.
+      </p>
+    </div>
   </div>
 </BaseLayout>
 
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const rows = document.querySelectorAll<HTMLElement>('.chapter-row');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter ?? 'all';
+      rows.forEach(row => {
+        if (filter === 'all') {
+          row.style.display = '';
+        } else {
+          const audiences = (row.dataset.audiences ?? '').split(',');
+          row.style.display = audiences.includes(filter) ? '' : 'none';
+        }
+      });
+    });
+  });
+</script>
+
 <style>
-  h1 {
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--color-navy);
-    margin: 0 0 1rem;
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--color-navy) 0%, #253a63 100%);
+    color: white;
   }
 
-  .lead {
+  .eyebrow {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 900;
+    color: white;
+    margin: 0 0 1rem;
+    line-height: 1.1;
+  }
+
+  .hero-sub {
     font-family: var(--font-body);
-    font-size: 1.15rem;
-    line-height: 1.75;
-    color: var(--color-slate);
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.8);
+    max-width: 55ch;
+    line-height: 1.65;
     margin-bottom: 2.5rem;
+  }
+
+  .model-grid {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .model-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .model-card-gold {
+    background: rgba(197,151,59,0.15);
+    border-color: rgba(197,151,59,0.4);
+  }
+
+  .model-label {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .model-title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .model-card p {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .model-arrow {
+    font-size: 1.5rem;
+    color: var(--color-gold);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Ways to contribute */
+  .ways-band {
+    background: var(--color-warm-gray);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-h2 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-navy);
+    margin: 0 0 0.5rem;
+  }
+
+  .section-sub {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-slate);
+    margin: 0 0 1.5rem;
   }
 
   .ways-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.25rem;
-    margin-bottom: 3rem;
+    margin-top: 1.5rem;
   }
 
   .way-card {
-    background: var(--color-warm-gray);
+    background: white;
     border: 1px solid var(--color-border);
     border-radius: 10px;
     padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
-  .way-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; }
+  .way-primary {
+    border-color: var(--color-navy);
+    border-width: 2px;
+  }
 
-  h2 {
+  .way-num {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-gold);
+  }
+
+  .way-card h3 {
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-navy);
-    margin: 0 0 0.6rem;
+    margin: 0;
   }
 
-  p, li {
+  .way-card p {
     font-family: var(--font-body);
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: #374151;
-    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--color-slate);
+    margin: 0;
+    flex: 1;
   }
 
-  ul {
-    padding-left: 1.5rem;
-    margin-bottom: 1.25rem;
+  .way-meta {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--color-slate);
+    opacity: 0.7;
   }
 
-  a { color: var(--color-navy); }
-  a:hover { color: var(--color-gold); }
-
-  .cta-link {
+  .way-btn {
     font-family: var(--font-ui);
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--color-navy);
     text-decoration: none;
-    display: inline-block;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
   }
 
-  .cta-link:hover { text-decoration: underline; }
+  .way-btn:hover { text-decoration: underline; }
+
+  /* Browser */
+  .browser-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 0.5rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--color-slate);
+  }
+
+  .dot, .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  .dot-published, .status-dot.dot-published { background: var(--color-success); }
+  .dot-draft,     .status-dot.dot-draft     { background: var(--color-alert); }
+  .dot-open,      .status-dot.dot-open      { background: var(--color-border); border: 1px solid #999; }
+
+  /* Filter */
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-btn {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-slate);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--color-navy); color: var(--color-navy); }
+  .filter-btn.active { background: var(--color-navy); color: white; border-color: var(--color-navy); }
+
+  /* Chapter list */
+  .chapter-list {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .chapter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    background: white;
+    transition: background 0.1s;
+  }
+
+  .chapter-row:last-child { border-bottom: none; }
+  .chapter-row:hover { background: var(--color-warm-gray); }
+
+  .row-left { flex: 1; min-width: 0; }
+  .row-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+
+  .row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ch-num {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-slate);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .ch-section {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    color: var(--color-slate);
+    opacity: 0.6;
+  }
+
+  .ch-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ch-title a { text-decoration: none; color: inherit; }
+  .ch-title a:hover { text-decoration: underline; }
+
+  .audience-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .audience-tag {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    background: var(--color-warm-gray);
+    color: var(--color-slate);
+    border: 1px solid var(--color-border);
+  }
+
+  .plans-badge {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: #D1FAE5;
+    color: #065F46;
+    white-space: nowrap;
+  }
+
+  .contribute-btn {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    text-decoration: none;
+    white-space: nowrap;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+
+  .contribute-btn:hover { opacity: 1; text-decoration: underline; }
+
+  /* Standards */
+  .standards-band {
+    background: var(--color-warm-gray);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .standards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .standard-item {
+    padding: 1.25rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+  }
+
+  .standard-label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gold);
+    margin-bottom: 0.4rem;
+  }
+
+  .standard-desc {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--color-slate);
+    margin: 0;
+  }
+
+  .standards-link {
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    color: var(--color-slate);
+    margin: 0;
+  }
+
+  .standards-link a { color: var(--color-navy); }
+  .standards-link a:hover { text-decoration: underline; }
 </style>
